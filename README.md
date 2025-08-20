@@ -1,5 +1,5 @@
 # Cheesecake
-C++ Code for 77038D Cheesecake's Robot Using EZ Template (We've come a long way).
+C/C++ Code for 77038D Cheesecake's Robot Using EZ Template (We've come a long way).
 
 # To download a file:
 > 1. Right-click on the desired folder of download and copy the URL (link address)  
