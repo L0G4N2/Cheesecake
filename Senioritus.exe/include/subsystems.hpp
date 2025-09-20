@@ -11,4 +11,4 @@ extern Drive chassis;
 // inline pros::adi::DigitalIn limit_switch('A');
 
 // inline pros::MotorGroup Intake(1, -2, 3);
-// inline pros::adi::DigitalOut Descore('A');
+inline pros::adi::DigitalOut Descore('A');

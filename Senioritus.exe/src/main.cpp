@@ -258,23 +258,25 @@ void opcontrol() {
 
     // . . .
     // Put more user control code here!
+    
+    if (master.get_digital(DIGITAL_R1)) {
+      Intake.move(127);
+    }
+    else if (master.get_digital(DIGITAL_R2)) {
+      Intake.move(-127);
+    }
+    else {
+      Intake.move(0);
+    }
+    if (master.get_digital(DIGITAL_L1)) {
+      Descore.set_value(true);
+    }
+    else if (master.get_digital(DIGITAL_L2)) {
+      Descore.set_value(false);
+    }
+    
     // . . .
 
-    // if (master.get_digital(DIGITAL_R1)) {
-    //   Intake.move(127);
-    // }
-    // else if (master.get_digital(DIGITAL_R2)) {
-    //   Intake.move(-127);
-    // }
-    // else {
-    //   Intake.move(0);
-    // }
-    // if (master.get_digital(DIGITAL_L1)) {
-    //   Descore.set_value(true);
-    // }
-    // else if (master.get_digital(DIGITAL_L2)) {
-    //   Descore.set_value(false);
-    // }
 
     pros::delay(ez::util::DELAY_TIME);  // This is used for timer calculations!  Keep this ez::util::DELAY_TIME
   }
