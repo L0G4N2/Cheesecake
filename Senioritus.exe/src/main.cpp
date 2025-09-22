@@ -268,6 +268,7 @@ void opcontrol() {
     else {
       Intake.move(0);
     }
+
     if (master.get_digital(DIGITAL_L1)) {
       Descore.set_value(true);
     }
@@ -275,6 +276,16 @@ void opcontrol() {
       Descore.set_value(false);
     }
     
+    if (master.get_digital(DIGITAL_X)) {
+      HighLow.move(127);
+    }
+    else if (master.get_digital(DIGITAL_B)) {
+      HighLow.move(-127);
+    }
+    else {
+      HighLow.move(0);
+    }
+
     // . . .
 
 

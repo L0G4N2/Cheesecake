@@ -379,4 +379,7 @@ void measure_offsets() {
 
 void endgame() {
   // Outtake to double-park
+  Intake.move(-90);
+  pros::delay(1000);
+  Intake.move(0);
 }

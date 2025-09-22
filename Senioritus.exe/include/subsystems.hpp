@@ -10,5 +10,6 @@ extern Drive chassis;
 // inline pros::Motor intake(1);
 // inline pros::adi::DigitalIn limit_switch('A');
 
-// inline pros::MotorGroup Intake(1, -2, 3);
+inline pros::MotorGroup Intake(14, 15);
 inline pros::adi::DigitalOut Descore('A');
+inline pros::Motor HighLow(6);
