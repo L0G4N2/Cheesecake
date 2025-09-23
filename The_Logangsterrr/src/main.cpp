@@ -1,8 +1,8 @@
 #include "main.h"
-#include "autons.h"
-#include "lemlib/api.hpp"
+// #include "autons.cpp"
+// #include "subsystems.hpp"
 
-using namespace lemlib;
+// using namespace lemlib;
 
 // Global auton selector state
 int current_auton_selection = 0;
