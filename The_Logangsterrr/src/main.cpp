@@ -1,5 +1,4 @@
 #include "main.h"
-#include "lemlib/api.hpp"
 
 // using namespace lemlib;
 
@@ -10,32 +9,28 @@ bool auto_started = false;
 // Create a controller object for the master controller
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
-// Creates a motor group with forwards ports 3, 2 and 1
-pros::MotorGroup left_mg({3, 2, 1});
-// left_mg.set_gearing(pros::v5::MotorGears::blue);
-// Creates a motor group with reversed ports 11, 12 and 13
-pros::MotorGroup right_mg({-11, -12, -13});
-// right_mg.set_gearing(pros::v5::MotorGears::blue);
+// Creates a motor group with forwards ports 3, 2 and 1 that are all blue
+pros::MotorGroup left_mg({3, 2, 1}, pros::MotorGearset::blue);
+// Creates a motor group with reversed ports 11, 12 and 13 that are all blue
+pros::MotorGroup right_mg({-11, -12, -13}, pros::MotorGearset::blue);
 // Intake
-pros::MotorGroup Intake({14, 15});
-// Intake.set_gearing(pros::v5::MotorGears::blue);
+pros::MotorGroup Intake({14, 15}, pros::MotorGearset::blue);
 // HighLow Motor
-pros::Motor HighLow(16);
-// HighLow.set_gearing(pros::v5::MotorGears::green);
+pros::Motor HighLow(16, pros::MotorGearset::green);
 // Descrore Pneumatics
 pros::adi::DigitalOut Descore('A');
+
 // Drivetrain settings
-lemlib::Drivetrain drivetrain(left_mg, // Left motor group
-                              right_mg, // Right motor group
-                              10.0f, // 10 inch track width
+lemlib::Drivetrain drivetrain(&left_mg, // Left motor group
+                              &right_mg, // Right motor group
+                              10, // 10 inch track width
                               lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
-                              360.0f, // drivetrain rpm is 360
-                              2.0f // horizontal drift is 2 (for now)
+                              360, // drivetrain rpm is 360
+                              2 // horizontal drift is 2 (for now)
 );
 
 // Create an imu on port 10
 pros::Imu imu(10);
-
 // Horizontal tracking wheel encoder
 pros::Rotation horizontalTracker(20);
 // Vertical tracking wheel encoder
@@ -112,7 +107,7 @@ void initialize() {
 	pros::lcd::initialize();
 	while (true) { // infinite loop
         // print measurements from the vertical tracker
-        pros::lcd::print(0, "Vertical Tracker: %d", verticalTracker.get_value());
+        pros::lcd::print(0, "Vertical Tracker: %d", verticalTracker.get_position());
         // print measurements from the horizontal tracker
         pros::lcd::print(1, "Horizontal Tracker: %d", horizontalTracker.get_position());
         pros::delay(10); // delay to save resources. DO NOT REMOVE
@@ -233,8 +228,8 @@ void opcontrol() {
 		
 		// Tank Control Scheme
 		// Get left y and right y positions
-		int leftY = master.get_analog(E_CONTROLLER_ANALOG_LEFT_Y);
-		int rightY = master.get_analog(E_CONTROLLER_ANALOG_RIGHT_Y);
+		int leftY = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+		int rightY = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
 
 		// move the robot
 		chassis.tank(leftY, rightY); // Sets right motor voltage to right joystick vertical axis
@@ -266,7 +261,6 @@ void opcontrol() {
 			Descore.set_value(false);
 		}
 					
-
 		pros::delay(20);  // Run for 20 ms then update
 	}
 }
