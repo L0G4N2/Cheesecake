@@ -1,9 +1,8 @@
 #include "main.h"
 
-using namespace lemlib;
-
 void RedRight() {
 	// Your code for the Red Right autonomous goes here
+	chassis.moveToPoint(20, 50, 90); // Move to (20, 50) facing 90 degrees
 }
 
 void RedLeft() {
