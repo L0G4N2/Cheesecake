@@ -6,19 +6,10 @@
 int current_auton_selection = 0;
 bool auto_started = false;
 
-// Create a controller object for the master controller
-pros::Controller master(pros::E_CONTROLLER_MASTER);
-
 // Creates a motor group with forwards ports 3, 2 and 1 that are all blue
 pros::MotorGroup left_mg({3, 2, 1}, pros::MotorGearset::blue);
 // Creates a motor group with reversed ports 11, 12 and 13 that are all blue
 pros::MotorGroup right_mg({-11, -12, -13}, pros::MotorGearset::blue);
-// Intake
-pros::MotorGroup Intake({14, 15}, pros::MotorGearset::blue);
-// HighLow Motor
-pros::Motor HighLow(16, pros::MotorGearset::green);
-// Descrore Pneumatics
-pros::adi::DigitalOut Descore('A');
 
 // Drivetrain settings
 lemlib::Drivetrain drivetrain(&left_mg, // Left motor group
