@@ -1,4 +1,6 @@
 #include "main.h"
+#include "pros/misc.h"
+#include "subsystems.hpp"
 
 // using namespace lemlib;
 
@@ -6,10 +8,14 @@
 int current_auton_selection = 0;
 bool auto_started = false;
 
+// Drivetrain settings
+// Create a controller object for the master controller
+
+
 // Creates a motor group with forwards ports 3, 2 and 1 that are all blue
-pros::MotorGroup left_mg({3, 2, 1}, pros::MotorGearset::blue);
+pros::MotorGroup left_mg({-7, -8, -3}, pros::MotorGearset::blue);
 // Creates a motor group with reversed ports 11, 12 and 13 that are all blue
-pros::MotorGroup right_mg({-11, -12, -13}, pros::MotorGearset::blue);
+pros::MotorGroup right_mg({11, 12, 13}, pros::MotorGearset::blue);
 
 // Drivetrain settings
 lemlib::Drivetrain drivetrain(&left_mg, // Left motor group
@@ -21,7 +27,7 @@ lemlib::Drivetrain drivetrain(&left_mg, // Left motor group
 );
 
 // Create an imu on port 10
-pros::Imu imu(10);
+pros::Imu imu(9);
 // Horizontal tracking wheel encoder
 pros::Rotation horizontalTracker(20);
 // Vertical tracking wheel encoder
@@ -32,9 +38,9 @@ lemlib::TrackingWheel horizontalTrackingWheel(&horizontalTracker, lemlib::Omniwh
 lemlib::TrackingWheel verticalTrackingWheel(&verticalTracker, lemlib::Omniwheel::NEW_275, -2.5);
 
 // odometry settings
-lemlib::OdomSensors sensors(&verticalTrackingWheel, // vertical tracking wheel 1, set to null
+lemlib::OdomSensors sensors(nullptr /*&verticalTrackingWheel*/, // vertical tracking wheel 1, set to null
                             nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
-                            &horizontalTrackingWheel, // horizontal tracking wheel 1
+                            nullptr /*&horizontalTrackingWheel*/, // horizontal tracking wheel 1
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
                             &imu // inertial sensor
 );
@@ -96,13 +102,29 @@ void initialize() {
 	 */
 
 	pros::lcd::initialize();
-	while (true) { // infinite loop
-        // print measurements from the vertical tracker
-        pros::lcd::print(0, "Vertical Tracker: %d", verticalTracker.get_position());
-        // print measurements from the horizontal tracker
-        pros::lcd::print(1, "Horizontal Tracker: %d", horizontalTracker.get_position());
-        pros::delay(10); // delay to save resources. DO NOT REMOVE
-    }
+	chassis.calibrate();
+
+	pros::Task screenTask([&]() {
+		// while (true) {
+		// 	// Print robot location to the screen
+		// 	pros::lcd::print(0, "X: %f", chassis.getPose().x); // X
+		// 	pros::lcd::print(1, "Y: %f", chassis.getPose().y); // Y
+		// 	pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // Heading
+
+		// 	// Delay to save resources
+		// 	pros::delay(50);
+		// }
+	});
+
+	// Use this to test Trackers:
+	// while (true) { // infinite loop
+    //     // print measurements from the vertical tracker
+    //     pros::lcd::print(0, "Vertical Tracker: %d", verticalTracker.get_position());
+    //     // print measurements from the horizontal tracker
+    //     pros::lcd::print(1, "Horizontal Tracker: %d", horizontalTracker.get_position());
+
+    //     pros::delay(10); // delay to save resources. DO NOT REMOVE
+    // }
 }
 
 void disabled() {
@@ -125,44 +147,44 @@ void competition_initialize() {
 	 * starts.
 	 */
 
-	while (!auto_started) {
-		pros::screen::erase(); // clear the brain screen
+	// while (!auto_started) {
+	// 	pros::screen::erase(); // clear the brain screen
 
-		// Show the currently selected auton
-		switch (current_auton_selection) {
-			case 0:
-				pros::screen::print(pros::E_TEXT_MEDIUM, 50, 50, "Red_Right");
-				break;
-			case 1:
-				pros::screen::print(pros::E_TEXT_MEDIUM, 50, 50, "Red_Left");
-				break;
-			case 2:
-				pros::screen::print(pros::E_TEXT_MEDIUM, 50, 50, "Blue_Right");
-				break;
-			case 3:
-				pros::screen::print(pros::E_TEXT_MEDIUM, 50, 50, "Blue_Left");
-				break;
-			case 4:
-				pros::screen::print(pros::E_TEXT_MEDIUM, 50, 50, "Tank_Odom_Test");
-				break;
-		}
+	// 	// Show the currently selected auton
+	// 	switch (current_auton_selection) {
+	// 		case 0:
+	// 			pros::screen::print(pros::E_TEXT_MEDIUM, 50, 50, "Red_Right");
+	// 			break;
+	// 		case 1:
+	// 			pros::screen::print(pros::E_TEXT_MEDIUM, 50, 50, "Red_Left");
+	// 			break;
+	// 		case 2:
+	// 			pros::screen::print(pros::E_TEXT_MEDIUM, 50, 50, "Blue_Right");
+	// 			break;
+	// 		case 3:
+	// 			pros::screen::print(pros::E_TEXT_MEDIUM, 50, 50, "Blue_Left");
+	// 			break;
+	// 		case 4:
+	// 			pros::screen::print(pros::E_TEXT_MEDIUM, 50, 50, "Tank_Odom_Test");
+	// 			break;
+	// 	}
 
-		// Tap screen to cycle auton selection
-		if (pros::screen::touch_status().touch_status == pros::E_TOUCH_PRESSED) {
-			// Wait until finger lifted (prevents double-count)
-			while (pros::screen::touch_status().touch_status == pros::E_TOUCH_PRESSED) {
-				pros::delay(10);
-			}
-			current_auton_selection++;
-		}
+	// 	// Tap screen to cycle auton selection
+	// 	if (pros::screen::touch_status().touch_status == pros::E_TOUCH_PRESSED) {
+	// 		// Wait until finger lifted (prevents double-count)
+	// 		while (pros::screen::touch_status().touch_status == pros::E_TOUCH_PRESSED) {
+	// 			pros::delay(10);
+	// 		}
+	// 		current_auton_selection++;
+	// 	}
 
-		// Loop back to 0 after last option
-		if (current_auton_selection >= 5) {
-			current_auton_selection = 0;
-		}
+	// 	// Loop back to 0 after last option
+	// 	if (current_auton_selection >= 5) {
+	// 		current_auton_selection = 0;
+	// 	}
 
-		pros::delay(20); // Small delay to prevent wasted resources
-	}
+	// 	pros::delay(20); // Small delay to prevent wasted resources
+	// }
 }
 void autonomous() {
 	/**
@@ -177,24 +199,24 @@ void autonomous() {
 	 * from where it left off.
 	 */
 
-	auto_started = true; // Flag to tell competition_initialize to stop
-	switch (current_auton_selection) {
-		case 0: // Red Right
-			RedRight();
-			break;
-		case 1: // Red Left
-			RedLeft();
-			break;
-		case 2: // Blue Right
-			BlueRight();
-			break;
-		case 3: // Blue Left
-			BlueLeft();
-			break;
-		case 4: // Tank Odom Test
-			TankOdomTest();
-			break;
-	}
+	// auto_started = true; // Flag to tell competition_initialize to stop
+	// switch (current_auton_selection) {
+	// 	case 0: // Red Right
+	// 		RedRight();
+	// 		break;
+	// 	case 1: // Red Left
+	// 		RedLeft();
+	// 		break;
+	// 	case 2: // Blue Right
+	// 		BlueRight();
+	// 		break;
+	// 	case 3: // Blue Left
+	// 		BlueLeft();
+	// 		break;
+	// 	case 4: // Tank Odom Test
+	// 		TankOdomTest();
+	// 		break;
+	// }
 }
 
 /**
@@ -213,6 +235,15 @@ void autonomous() {
 void opcontrol() {
 
 	while (true) {
+		pros::Controller master(pros::E_CONTROLLER_MASTER);
+
+		// Intake
+		// pros::MotorGroup Intake({2, -1}, pros::MotorGearset::blue);
+		// // HighLow Motor
+		// pros::Motor HighLow(10, pros::MotorGearset::green);
+		// // Descrore Pneumatics
+		// pros::adi::DigitalOut Descore('A');
+
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
 		(pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 		(pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);  // Prints status of the emulated screen LCDs
@@ -225,30 +256,30 @@ void opcontrol() {
 		// move the robot
 		chassis.tank(leftY, rightY); // Sets right motor voltage to right joystick vertical axis
 		
-		if (master.get_digital(DIGITAL_R1)) {
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
 			Intake.move(127);
 		}
-		else if (master.get_digital(DIGITAL_R2)) {
+		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
 			Intake.move(-127);
 		}
 		else {
 			Intake.move(0);
 		}
 
-		if (master.get_digital(DIGITAL_X)) {
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
 			HighLow.move(127);
 		}
-		else if (master.get_digital(DIGITAL_B)) {
+		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
 			HighLow.move(-127);
 		}
 		else {
 			HighLow.move(0);
 		}
 
-		if (master.get_digital(DIGITAL_L1)) {
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
 			Descore.set_value(true);
 		}
-		else if (master.get_digital(DIGITAL_L2)) {
+		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
 			Descore.set_value(false);
 		}
 					
