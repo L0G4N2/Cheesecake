@@ -1,9 +1,7 @@
 # Cheesecake
 C/C++ Code for 77038D Cheesecake's Robot Using PROS 4.2.1 and LemLib 0.5.6 (We've come a long way).  
 
-# DO NOT DOWNLOAD SENIORITUS.EXE  
-# THE_LOGANGSTERRR IS THE NEW MAIN FILE  
-# DOWNLOAD THAT ONE  
+# "Cooked" is the new main file for the bot, it's inside of the "Raw" folder
 
 # To download a file:
 > 1. Right-click on the desired folder of download and copy the URL (link address)  
