@@ -4,16 +4,16 @@
 #include "subsystems.hpp"
 
 // left motor group
-pros::MotorGroup left_mg({-7, -8, -20}, pros::MotorGears::blue);
+pros::MotorGroup left_mg({-11, -12, -3}, pros::MotorGears::blue);
 // right motor group
-pros::MotorGroup right_mg({11, 12, 3}, pros::MotorGears::blue);
+pros::MotorGroup right_mg({4, 19, 20}, pros::MotorGears::blue);
 
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&left_mg, // left motor group
                               &right_mg, // right motor group
                               11, // 11 inch track width
                               lemlib::Omniwheel::NEW_325, // using new 3.25" omnis
-                              360, // drivetrain rpm is 360
+                              450, // drivetrain rpm is 450
                               2 // horizontal drift is 2 (for now)
 );
 
@@ -131,7 +131,7 @@ void autonomous() {
 	 * will be stopped. Re-enabling the robot will restart the task, not re-start it
 	 * from where it left off.
 	 */
-	RedRight();
+	// RedRight();
 	// RedLeft();
 	// BlueRight();
 	// BlueLeft();
@@ -198,7 +198,7 @@ void opcontrol() {
 			case -1:
 				HighLow.move(-127);
 				break;
-			default:
+			case 0:
 				HighLow.move(0);
 				break;
 		}
