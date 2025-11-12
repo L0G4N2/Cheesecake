@@ -1,15 +1,10 @@
 #pragma once
 
-#include "EZ-Template/api.hpp"
-#include "api.h"
+#include "lemlib/api.hpp"
 
-extern Drive chassis;
+using namespace pros;
 
-// Your motors, sensors, etc. should go here.  Below are examples
-
-// inline pros::Motor intake(1);
-// inline pros::adi::DigitalIn limit_switch('A');
-
-inline pros::MotorGroup Intake(14, 15);
-inline pros::adi::DigitalOut Descore('A');
-inline pros::Motor HighLow(6);
+inline Controller master(E_CONTROLLER_MASTER);
+inline MotorGroup Intake({2, -1}); // Creates a motor group for the Intake
+inline Motor HighLow(10);
+inline adi::DigitalOut Descore('A');
