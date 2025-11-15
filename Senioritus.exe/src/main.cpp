@@ -199,10 +199,10 @@ void opcontrol() {
 		}
 
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-			Descore.set_value(true);
+			Blocker.set_value(true);
 		}
 		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-			Descore.set_value(false);
+			Blocker.set_value(false);
 		}
 
 		pros::delay(20);                               // Run for 20 ms then update
