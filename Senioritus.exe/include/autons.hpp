@@ -4,8 +4,6 @@
 
 extern lemlib::Chassis chassis;
 
-void RedRight();
-void RedLeft();
-void BlueRight();
-void BlueLeft();
+void right();
+void left();
 void odom_test();
