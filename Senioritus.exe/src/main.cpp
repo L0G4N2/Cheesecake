@@ -2,7 +2,11 @@
 #include "autons.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "liblvgl/llemu.hpp"
+#include "pros/misc.h"
 #include "subsystems.hpp"
+
+int autonSelector = 0;
+bool autonStarted = false;
 
 // left motor group
 pros::MotorGroup left_mg({-11, -12, -3}, pros::MotorGears::blue);
@@ -112,7 +116,41 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+	while (autonStarted == false) {
+		switch (autonSelector) {
+			case 0:
+				pros::lcd::set_text(1, "Auton: Right");
+				break;
+			case 1:
+				pros::lcd::set_text(1, "Auton: Left");
+				break;
+			case 2:
+				pros::lcd::set_text(1, "Auton: Odom Test");
+				break;
+		}
+
+		if (pros::lcd::read_buttons() & LCD_BTN_LEFT) {
+			autonSelector--;
+			if (autonSelector < 0) {
+				autonSelector = 2;
+			}
+			pros::delay(300);
+		}
+		else if (pros::lcd::read_buttons() & LCD_BTN_RIGHT) {
+			autonSelector++;
+			if (autonSelector > 2) {
+				autonSelector = 0;
+			}
+			pros::delay(300);
+		}
+		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT) && master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+			autonomous();
+		}
+
+		pros::delay(20); // small delay to prevent wasted resources
+	}
+}
 
 void autonomous() {
 	/**
@@ -126,11 +164,27 @@ void autonomous() {
 	 * will be stopped. Re-enabling the robot will restart the task, not re-start it
 	 * from where it left off.
 	 */
-	// RedRight();
-	// RedLeft();
-	// BlueRight();
-	// BlueLeft();
-	odom_test();
+	autonStarted = true;
+	switch (autonSelector) {
+		case 0:
+			right();
+			break;
+		case 1:
+			left();
+			break;
+		case 2:
+			odom_test();
+			break;
+	}
+
+	while (true) {
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y) && master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+			autonStarted = false;
+			competition_initialize();
+		}
+
+		pros::delay(200);
+	}
 }
 
 /**
@@ -203,6 +257,10 @@ void opcontrol() {
 		}
 		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
 			Blocker.set_value(false);
+		}
+
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP) && master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+			competition_initialize();
 		}
 
 		pros::delay(20);                               // Run for 20 ms then update
