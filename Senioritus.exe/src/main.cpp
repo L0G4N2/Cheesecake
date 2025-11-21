@@ -3,10 +3,12 @@
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "liblvgl/llemu.hpp"
 #include "pros/misc.h"
+#include "pros/motors.h"
 #include "subsystems.hpp"
 
 int autonSelector = 0;
 bool autonStarted = false;
+bool speed = true;
 
 // left motor group
 pros::MotorGroup left_mg({-11, -12, -3}, pros::MotorGears::blue);
@@ -164,6 +166,7 @@ void autonomous() {
 	 * will be stopped. Re-enabling the robot will restart the task, not re-start it
 	 * from where it left off.
 	 */
+	chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 	autonStarted = true;
 	switch (autonSelector) {
 		case 0:
@@ -202,6 +205,7 @@ void autonomous() {
  */
 void opcontrol() {
 	int highState = 0; // 1 = up, 0 = off, -1 = down
+	chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 
 	while (true) {
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
@@ -220,11 +224,26 @@ void opcontrol() {
 		// left_mg.move(dir - turn);                      // Sets left motor voltage
 		// right_mg.move(dir + turn);                     // Sets right motor voltage
 
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+			speed = true;
+		}
+		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+			speed = false;
+		}
+
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && speed) {
 			Intake.move(127);
 		}
-		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) && speed) {
 			Intake.move(-127);
+		}
+		else if (master.get_digital(E_CONTROLLER_DIGITAL_R1) && speed == false) {
+			Front.move(127);
+			S.move(60);
+		}
+		else if (master.get_digital(E_CONTROLLER_DIGITAL_R2) && speed == false) {
+			Front.move(-127);
+			S.move(-60);
 		}
 		else {
 			Intake.move(0);
