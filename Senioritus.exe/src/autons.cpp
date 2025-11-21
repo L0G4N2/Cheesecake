@@ -1,3 +1,4 @@
+#include "lemlib/chassis/chassis.hpp"
 #include "main.h"
 #include "pros/adi.h"
 #include "pros/rtos.h"
@@ -10,23 +11,23 @@ void right() {
     chassis.setPose(0, 0, 0);
     HighLow.move(-127);
     Blocker.set_value(true);
-    chassis.moveToPose(13.8, 25.6, -45, 4000, {.maxSpeed = 110, .minSpeed = 80});
-    Intake.move(50);
-    pros::delay(500);
-    Intake.move(0);
-    chassis.turnToHeading(45-180, 3000, {.maxSpeed = 70});
-    chassis.moveToPose(-3.2, 36.2, -45-180, 4000, {false});
-    Intake.move(127);
-    pros::delay(500);
-    chassis.moveToPose(35.4, -7.1, 180, 4500);
+    chassis.moveToPose(15, 15, -45, 4000, {.minSpeed = 60, .earlyExitRange = 6});
+    chassis.waitUntilDone();
+    Front.move(127);
+    S.move(60);
+    chassis.moveToPoint(-25, 30, 6000, {.maxSpeed = 40});
+    chassis.swingToHeading(-90, lemlib::DriveSide::RIGHT, 3000, {.maxSpeed = 50});
 }
 
 void left() {
     // Code here
-    // chassis.setPose(0, 0, 0);
-    // HighLow.move(-127);
-    // Blocker.set_value(true);
-    // chassis.moveToPose(-13.8, 25.6, 45, 4000, {.maxSpeed = 80, .minSpeed = 50});
+    chassis.setPose(0, 0, 0);
+    HighLow.move(-127);
+    Blocker.set_value(true);
+    chassis.moveToPose(-15, 18, 45, 4000, {.minSpeed = 40, .earlyExitRange = 6});
+    chassis.waitUntilDone();
+    chassis.moveToPoint(20, 35, 4000, {.maxSpeed = 20});
+
     // Intake.move(50);
     // pros::delay(500);
     // Intake.move(0);
@@ -35,18 +36,6 @@ void left() {
     // Intake.move(127);
     // pros::delay(1500);
     // chassis.moveToPose(-35.4, -7.1, 180, 4500);
-
-    chassis.setPose(0, 0, 0);
-    pros::delay(2000);
-    HighLow.move(127);
-    pros::delay(2000);
-    chassis.moveToPose(-30, 0, -90, 4000);
-    pros::delay(2000);
-    chassis.turnToHeading(-180, 4000);
-    pros::delay(2000);
-    chassis.moveToPose(-30, 20, -180, 4000, {false});
-    pros::delay(2000);
-    Intake.move(127);
 }
 
 void odom_test() {
