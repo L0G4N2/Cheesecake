@@ -7,10 +7,10 @@ C/C++ Code for 77038D Cheesecake's Robot Using PROS 4.2.1 and LemLib 0.5.6 (We'v
 > 3. Paste the URL and press "Enter"
 
 # Position of Competition Autonomous Functions
-> *Note: Run Senioritus.exe **BEFORE** plugging in the Controller for Competition, tap the Brain Screen to select an auton based on what side the Robot is on **THEN** plug in*
-> 1. Face the back (*Clamp*) towards the *Mobile Goal*  
-> 2. Center the *Intake* & *Clamp* with the corner of the *Mobile Goal* and the connection between two *Field Tiles*  
-> 3. Center the Front Wheels (closest to the *Intake*) of the *Drivetrain* on the *Autonomous Line*
+> *Note: Run Senioritus.exe **BEFORE** plugging in the Controller for Competition, tap the left and right buttons on the Brain Screen to select an auton based on what side the Robot is on **THEN** plug in*
+> 1. Ensure *Robot* has air and a *Pre-Load*  
+> 2. Line up the *Drivetrain* with the *Parking Zone*  
+> 3. Center the Front Wheels on top of where the connection between two *Field Tiles*  
 
 # Position of Skills Autonomous Function
 > *Note: Run Senioritus.exe and tap the screen to traverse autons, press [button combination] to run Autonomous Skills after completing the following steps*
