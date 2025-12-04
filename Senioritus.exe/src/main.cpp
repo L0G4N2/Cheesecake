@@ -11,9 +11,9 @@ bool autonStarted = false;
 bool speed = true;
 
 // left motor group
-pros::MotorGroup left_mg({-11, -12, -3}, pros::MotorGears::blue);
+pros::MotorGroup left_mg({-11, -12, -13}, pros::MotorGears::blue);
 // right motor group
-pros::MotorGroup right_mg({4, 19, 20}, pros::MotorGears::blue);
+pros::MotorGroup right_mg({18, 19, 20}, pros::MotorGears::blue);
 
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&left_mg, // left motor group
@@ -122,32 +122,42 @@ void competition_initialize() {
 	while (autonStarted == false) {
 		switch (autonSelector) {
 			case 0:
-				pros::lcd::set_text(1, "Auton: Right");
+				pros::lcd::set_text(1, "Auton -> Right");
 				break;
 			case 1:
-				pros::lcd::set_text(1, "Auton: Left");
+				pros::lcd::set_text(1, "Auton -> Right: Win Point");
 				break;
 			case 2:
-				pros::lcd::set_text(1, "Auton: Odom Test");
+				pros::lcd::set_text(1, "Auton -> Left");
+				break;
+			case 3:
+				pros::lcd::set_text(1, "Auton -> Left: Win Point");
+				break;
+			case 4:
+				pros::lcd::set_text(1, "Auton -> Odom Test");
 				break;
 		}
 
 		if (pros::lcd::read_buttons() & LCD_BTN_LEFT) {
 			autonSelector--;
 			if (autonSelector < 0) {
-				autonSelector = 2;
+				autonSelector = 4;
 			}
 			pros::delay(300);
 		}
 		else if (pros::lcd::read_buttons() & LCD_BTN_RIGHT) {
 			autonSelector++;
-			if (autonSelector > 2) {
+			if (autonSelector > 4) {
 				autonSelector = 0;
 			}
 			pros::delay(300);
 		}
-		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT) && master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+		
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT) && master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
 			autonomous();
+		}
+		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A) && master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
+			opcontrol();
 		}
 
 		pros::delay(20); // small delay to prevent wasted resources
@@ -181,7 +191,7 @@ void autonomous() {
 	}
 
 	while (true) {
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y) && master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A) && master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
 			autonStarted = false;
 			competition_initialize();
 		}
@@ -237,11 +247,11 @@ void opcontrol() {
 		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) && speed) {
 			Intake.move(-127);
 		}
-		else if (master.get_digital(E_CONTROLLER_DIGITAL_R1) && speed == false) {
+		else if (master.get_digital(E_CONTROLLER_DIGITAL_R1) && !speed) {
 			Front.move(127);
 			S.move(60);
 		}
-		else if (master.get_digital(E_CONTROLLER_DIGITAL_R2) && speed == false) {
+		else if (master.get_digital(E_CONTROLLER_DIGITAL_R2) && !speed) {
 			Front.move(-127);
 			S.move(-60);
 		}
@@ -259,17 +269,17 @@ void opcontrol() {
 			highState = -1;
 		}
 
-		switch (highState) {
-			case 1:
-				HighLow.move(127);
-				break;
-			case -1:
-				HighLow.move(-127);
-				break;
-			case 0:
-				HighLow.move(0);
-				break;
-		}
+		// switch (highState) {
+		// 	case 1:
+		// 		HighLow.move(127);
+		// 		break;
+		// 	case -1:
+		// 		HighLow.move(-127);
+		// 		break;
+		// 	case 0:
+		// 		HighLow.move(0);
+		// 		break;
+		// }
 
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
 			Blocker.set_value(true);
@@ -278,7 +288,15 @@ void opcontrol() {
 			Blocker.set_value(false);
 		}
 
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+			Scraper.set_value(true);
+		}
+		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) {
+			Scraper.set_value(false);
+		}
+
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP) && master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+			autonStarted = false;
 			competition_initialize();
 		}
 
