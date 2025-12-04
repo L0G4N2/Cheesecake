@@ -29,11 +29,11 @@ pros::Imu imu(9);
 // horizontal tracking wheel encoder
 pros::Rotation horizontal_tracker(6);
 // vertical tracking wheel encoder
-pros::adi::Encoder vertical_tracker('C', 'D', true);
+pros::Rotation vertical_tracker(-7);
 // horizontal tracking wheel
 lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_tracker, lemlib::Omniwheel::NEW_325, -14);
 // vertical tracking wheel
-lemlib::TrackingWheel vertical_tracking_wheel(&vertical_tracker, lemlib::Omniwheel::NEW_275, -2.5);
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_tracker, lemlib::Omniwheel::NEW_325, -5.5, 5.0/3.0);
 
 // odometry settings
 lemlib::OdomSensors sensors(nullptr /*&vertical_tracking_wheel*/, // vertical tracking wheel 1, set to null
