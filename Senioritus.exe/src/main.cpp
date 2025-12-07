@@ -4,6 +4,8 @@
 #include "liblvgl/llemu.hpp"
 #include "pros/misc.h"
 #include "pros/motors.h"
+#include "pros/rotation.hpp"
+#include "pros/rtos.hpp"
 #include "subsystems.hpp"
 
 int autonSelector = 0;
@@ -25,20 +27,20 @@ lemlib::Drivetrain drivetrain(&left_mg, // left motor group
 );
 
 // imu
-pros::Imu imu(9);
+pros::Imu imu(16);
 // horizontal tracking wheel encoder
 pros::Rotation horizontal_tracker(6);
 // vertical tracking wheel encoder
-pros::Rotation vertical_tracker(-7);
+pros::Rotation vertical_tracker(-10);
 // horizontal tracking wheel
 lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_tracker, lemlib::Omniwheel::NEW_325, -14);
 // vertical tracking wheel
-lemlib::TrackingWheel vertical_tracking_wheel(&vertical_tracker, lemlib::Omniwheel::NEW_325, -5.5, 5.0/3.0);
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_tracker, lemlib::Omniwheel::NEW_325, -5.5, 48.0/60.0);
 
 // odometry settings
-lemlib::OdomSensors sensors(nullptr /*&vertical_tracking_wheel*/, // vertical tracking wheel 1, set to null
+lemlib::OdomSensors sensors(&vertical_tracking_wheel, // vertical tracking wheel 1, set to null
                             nullptr, // vertical tracking wheel 2, set to nullptr as we are using IMEs
-                            &horizontal_tracking_wheel, // horizontal tracking wheel 1
+                            nullptr /*&horizontal_tracking_wheel*/, // horizontal tracking wheel 1
                             nullptr, // horizontal tracking wheel 2, set to nullptr as we don't have a second one
                             &imu // inertial sensor
 );
@@ -153,7 +155,7 @@ void competition_initialize() {
 			pros::delay(300);
 		}
 		
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT) && master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP) && master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
 			autonomous();
 		}
 		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A) && master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
@@ -178,14 +180,21 @@ void autonomous() {
 	 */
 	chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 	autonStarted = true;
+
 	switch (autonSelector) {
 		case 0:
 			right();
 			break;
 		case 1:
-			left();
+			rightWP();
 			break;
 		case 2:
+			left();
+			break;
+		case 3:
+			leftWP();
+			break;
+		case 4:
 			odom_test();
 			break;
 	}
@@ -214,14 +223,13 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	int highState = 0; // 1 = up, 0 = off, -1 = down
 	chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 
 	while (true) {
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);  // Prints status of the emulated screen LCDs
-		
+
 		// Tank control scheme
 		int left = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick
 		int right = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);  // Gets amount forward/backward from right joystick
@@ -234,68 +242,49 @@ void opcontrol() {
 		// left_mg.move(dir - turn);                      // Sets left motor voltage
 		// right_mg.move(dir + turn);                     // Sets right motor voltage
 
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
-			speed = true;
-		}
-		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
-			speed = false;
-		}
-
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && speed) {
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
 			Intake.move(127);
 		}
-		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2) && speed) {
+		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
 			Intake.move(-127);
-		}
-		else if (master.get_digital(E_CONTROLLER_DIGITAL_R1) && !speed) {
-			Front.move(127);
-			S.move(60);
-		}
-		else if (master.get_digital(E_CONTROLLER_DIGITAL_R2) && !speed) {
-			Front.move(-127);
-			S.move(-60);
 		}
 		else {
 			Intake.move(0);
 		}
 
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
-			// Toggle between up and off
-			highState = (highState == 1) ? 0 : 1;
+			HighLow.set_value(false);
 		}
 
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
-			// Move down while B is pressed
-			highState = -1;
+			HighLow.set_value(true);
 		}
-
-		// switch (highState) {
-		// 	case 1:
-		// 		HighLow.move(127);
-		// 		break;
-		// 	case -1:
-		// 		HighLow.move(-127);
-		// 		break;
-		// 	case 0:
-		// 		HighLow.move(0);
-		// 		break;
-		// }
 
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
-			Blocker.set_value(true);
+			Blocker.move(127);
 		}
 		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
-			Blocker.set_value(false);
+			Blocker.move(-127);
+		}
+		else {
+			Blocker.move(0);
 		}
 
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
 			Scraper.set_value(true);
 		}
-		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) {
+		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
 			Scraper.set_value(false);
 		}
 
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_UP) && master.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+			Descore.set_value(true);
+		}
+		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
+			Descore.set_value(false);
+		}
+
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT) && master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
 			autonStarted = false;
 			competition_initialize();
 		}
