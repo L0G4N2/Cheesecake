@@ -12,19 +12,20 @@ void right() {
     pros::delay(1500);
     chassis.setPose(0, 0, 0);
     // HighLow.move(-127);
-    Blocker.set_value(true);
-    chassis.moveToPose(15, 22.5, -45, 4000, {.minSpeed = 60, .earlyExitRange = 6});
-    chassis.waitUntilDone();
-    Front.move(127);
-    S.move(60);
-    chassis.moveToPoint(-25, 30, 4000, {.maxSpeed = 40});
-    chassis.swingToHeading(-80, lemlib::DriveSide::LEFT, 3000, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 50});
-    S.move(30);
-    chassis.waitUntilDone();
-    chassis.swingToHeading(-45, lemlib::DriveSide::LEFT, 3000, {.direction = AngularDirection::CW_CLOCKWISE});
-    chassis.moveToPoint(-25, 30, 4000, {.forwards = false, .maxSpeed = 40});
-    chassis.moveToPoint(-30, 35, 4000);
-    Intake.move(-127);
+    Blocker.move(0);
+    chassis.moveToPose(1, 22.5, 40, 4000, {.minSpeed = 60, .earlyExitRange = 6});
+
+    // Intake.move(127);
+    // chassis.moveToPoint(-1, 30.5, 4000, {.maxSpeed = 80});
+    // pros::delay(1500);
+    // chassis.swingToHeading(-80, lemlib::DriveSide::LEFT, 3000, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 50});
+    // Intake.move(0);
+    // chassis.waitUntilDone();
+    // chassis.swingToHeading(-45, lemlib::DriveSide::LEFT, 3000, {.direction = AngularDirection::CW_CLOCKWISE});
+    // chassis.moveToPoint(-25, 30, 4000, {.forwards = false, .maxSpeed = 40});
+    // chassis.moveToPoint(-30, 35, 4000);
+    // Intake.move(-127);
+
     // chassis.moveToPoint(-25, 30, 4000, {.forwards = false, .maxSpeed = 40});
     // chassis.swingToHeading(-50, lemlib::DriveSide::LEFT, 4000, {.direction = lemlib::AngularDirection::CCW_COUNTERCLOCKWISE});
     // chassis.moveToPoint(-35, 35, 4000, {.minSpeed = 127});
@@ -39,14 +40,12 @@ void left() {
     chassis.calibrate(true);
     chassis.setPose(0, 0, 0);
     // HighLow.move(-127);
-    Blocker.set_value(true);
+    Blocker.move(0);
     chassis.moveToPose(-15, 22.5, 45, 4000, {.minSpeed = 60, .earlyExitRange = 6});
     chassis.waitUntilDone();
-    Front.move(127);
-    S.move(60);
+    Intake.move(127);
     chassis.moveToPoint(25, 30, 4000, {.maxSpeed = 40});
     chassis.swingToHeading(80, lemlib::DriveSide::RIGHT, 3000, {.direction = AngularDirection::CW_CLOCKWISE, .maxSpeed = 50});
-    S.move(30);
     chassis.waitUntilDone();
     chassis.swingToHeading(45, lemlib::DriveSide::RIGHT, 3000, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE});
     chassis.moveToPoint(25, 30, 4000, {.forwards = false, .maxSpeed = 40});
@@ -64,7 +63,5 @@ void odom_test() {
     chassis.calibrate(true);
     pros::delay(1500);
     chassis.setPose(0, 0, 0);
-    chassis.moveToPose(0, 50, 0, 4000);
-    pros::delay(2000);
-    chassis.moveToPose(50, 50, 90, 4000);
+    chassis.moveToPoint(0, 48, 40000);
 }
