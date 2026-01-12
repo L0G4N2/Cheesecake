@@ -7,28 +7,33 @@
 #include "autons.hpp"
 
 void right() {
-    // Code here
+    // Calibrate Odometry and Set Starting Pose
     chassis.calibrate(true);
     pros::delay(1500);
     chassis.setPose(0, 0, 0);
-    // HighLow.move(-127);
     Blocker.move(0);
-    chassis.moveToPose(1, 22.5, 40, 4000, {.minSpeed = 60, .earlyExitRange = 6});
-
-    // Intake.move(127);
-    // chassis.moveToPoint(-1, 30.5, 4000, {.maxSpeed = 80});
-    // pros::delay(1500);
-    // chassis.swingToHeading(-80, lemlib::DriveSide::LEFT, 3000, {.direction = AngularDirection::CCW_COUNTERCLOCKWISE, .maxSpeed = 50});
-    // Intake.move(0);
-    // chassis.waitUntilDone();
-    // chassis.swingToHeading(-45, lemlib::DriveSide::LEFT, 3000, {.direction = AngularDirection::CW_CLOCKWISE});
-    // chassis.moveToPoint(-25, 30, 4000, {.forwards = false, .maxSpeed = 40});
-    // chassis.moveToPoint(-30, 35, 4000);
-    // Intake.move(-127);
-
-    // chassis.moveToPoint(-25, 30, 4000, {.forwards = false, .maxSpeed = 40});
-    // chassis.swingToHeading(-50, lemlib::DriveSide::LEFT, 4000, {.direction = lemlib::AngularDirection::CCW_COUNTERCLOCKWISE});
-    // chassis.moveToPoint(-35, 35, 4000, {.minSpeed = 127});
+    // Grab First 3 Balls
+    Intake.move(127);
+    chassis.moveToPose(-1.98, 22.5, 40, 4000, {.maxSpeed = 80});
+    chassis.waitUntilDone();
+    chassis.moveToPoint(6.02, 30.5, 4000, {.maxSpeed = 80});
+    pros::delay(2000);
+    Intake.move(0);
+    chassis.waitUntilDone();
+    // Score Balls into Low Goal
+    chassis.moveToPose(-4.228, 41.969, -45, 4000, {.maxSpeed = 80});
+    pros::delay(1500);
+    Intake.move(-80);
+    pros::delay(1500);
+    Intake.move(127);
+    // Back Out and Reposition for Next 3 Balls
+    chassis.moveToPoint(0.772, 36.969, 4000, {.forwards = false, .maxSpeed = 80});
+    chassis.waitUntilDone();
+    chassis.moveToPose(30.347, -2.863, 180, 4000, {.maxSpeed = 80});
+    pros::delay(1500);
+    Scraper.set_value(true);
+    // Score on High Goal
+    chassis.moveToPoint(30.347, 24.13, 4000, {.forwards = false, .maxSpeed = 80});
 }
 
 void rightWP() {
