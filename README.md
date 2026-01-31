@@ -14,7 +14,7 @@ C/C++ Code for 77038D Cheesecake's Robot Using PROS 4.2.1 and LemLib 0.5.6 (We'v
 
 # Position of Skills Autonomous Function
 > *Note: Run Senioritus.exe and tap the screen to traverse autons, press UP and DOWN at the same time to run Autonomous Skills after completing the following steps*
-> Position the bot regularly for Auton and traverse through the Autons until it has selected *skills*  
-> Place *Pre-Load* inside the *Blocker*
-> Ensure someone has a stopwatch  
-> Simultaneously start the timer while pressing *UP* and *DOWN* to start the auton
+> 1. Position the bot regularly for Auton and traverse through the Autons until it has selected *skills*  
+> 2. Place *Pre-Load* inside the *Blocker*
+> 3. Ensure someone has a stopwatch  
+> 4. Simultaneously start the timer while pressing *UP* and *DOWN* to start the auton
