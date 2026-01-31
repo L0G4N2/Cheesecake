@@ -8,4 +8,5 @@ void right();
 void rightWP();
 void left();
 void leftWP();
+void skills();
 void odom_test();
