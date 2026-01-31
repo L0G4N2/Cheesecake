@@ -15,7 +15,7 @@ bool speed = true;
 // left motor group
 pros::MotorGroup left_mg({-11, -12, -13}, pros::MotorGears::blue);
 // right motor group
-pros::MotorGroup right_mg({18, 19, 20}, pros::MotorGears::blue);
+pros::MotorGroup right_mg({18, 17, 20}, pros::MotorGears::blue);
 
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&left_mg, // left motor group
@@ -136,6 +136,9 @@ void competition_initialize() {
 				pros::lcd::set_text(1, "Auton -> Left: Win Point");
 				break;
 			case 4:
+				pros::lcd::set_text(1, "Auton -> Skills");
+				break;
+			case 5:
 				pros::lcd::set_text(1, "Auton -> Odom Test");
 				break;
 		}
@@ -143,13 +146,13 @@ void competition_initialize() {
 		if (pros::lcd::read_buttons() & LCD_BTN_LEFT) {
 			autonSelector--;
 			if (autonSelector < 0) {
-				autonSelector = 4;
+				autonSelector = 5;
 			}
 			pros::delay(300);
 		}
 		else if (pros::lcd::read_buttons() & LCD_BTN_RIGHT) {
 			autonSelector++;
-			if (autonSelector > 4) {
+			if (autonSelector > 5) {
 				autonSelector = 0;
 			}
 			pros::delay(300);
@@ -250,14 +253,6 @@ void opcontrol() {
 		}
 		else {
 			Intake.move(0);
-		}
-
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
-			HighLow.set_value(false);
-		}
-
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
-			HighLow.set_value(true);
 		}
 
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
