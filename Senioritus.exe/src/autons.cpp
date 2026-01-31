@@ -180,5 +180,10 @@ void odom_test() {
     chassis.calibrate(true);
     pros::delay(1500);
     chassis.setPose(0, 0, 0);
-    chassis.moveToPoint(0, 48, 40000);
+    chassis.moveToPoint(0, 2, 4000);
+    Intake.move(127);
+    Blocker.move(127);
+    pros::delay(2000);
+    Intake.move(0);
+    Blocker.move(0);
 }
