@@ -11,6 +11,7 @@
 int autonSelector = 0;
 bool autonStarted = false;
 bool speed = true;
+bool isDescore = false;
 
 // left motor group
 pros::MotorGroup left_mg({-11, -12, -13}, pros::MotorGears::blue);
@@ -233,6 +234,7 @@ void opcontrol() {
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);  // Prints status of the emulated screen LCDs
 
+		Scraper.set_value(isDescore);
 		// Tank control scheme
 		int left = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick
 		int right = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);  // Gets amount forward/backward from right joystick
@@ -272,12 +274,16 @@ void opcontrol() {
 			Scraper.set_value(false);
 		}
 
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
-			Descore.set_value(true);
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
+			isDescore = !(isDescore);
 		}
-		else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
-			Descore.set_value(false);
-		}
+		
+		// if (master.get_digital(pros::E_CONTROLLER_DIGITAL_A)) {
+		// 	Descore.set_value(true);
+		// }
+		// else if (master.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
+		// 	Descore.set_value(false);
+		// }
 
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT) && master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
 			autonStarted = false;
