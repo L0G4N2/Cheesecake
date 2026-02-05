@@ -9,5 +9,6 @@ inline Controller master(E_CONTROLLER_MASTER);
 inline Motor Intake(-1, MotorGears::blue);
 inline Motor Blocker(15, MotorGears::blue);
 
+inline adi::DigitalOut HighLow('F');
 inline adi::DigitalOut Descore('G');
 inline adi::DigitalOut Scraper('H');
