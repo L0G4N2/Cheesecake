@@ -81,11 +81,11 @@ void left() {
     pros::delay(100);
     Scraper.set_value(true);
     pros::delay(100);
-    chassis.moveToPoint(-30.347, -2.363, 2500);
+    chassis.moveToPoint(-30.347, -3.863, 2500);
     Intake.move(127);
-    pros::delay(1350);
+    pros::delay(2000);
     // Score on High Goal
-    chassis.moveToPoint(-30.347, 24.13, 2000, {.forwards = false, .minSpeed = 90});
+    chassis.moveToPoint(-30.347, 24.13, 2000, {.forwards = false, .maxSpeed = 90});
     chassis.waitUntilDone();
     Intake.move(127);
     Blocker.move(127);
@@ -102,7 +102,7 @@ void skills() {
     chassis.setPose(0, 0, 0);
     Blocker.move(0);
     // Position at Match Load
-    chassis.moveToPose(-20.435, 21.206, -105, 4000, {.maxSpeed = 90});
+    chassis.moveToPose(-17.943, 15.844, -105, 4000, {.maxSpeed = 80});
     chassis.moveToPose(-30.347, -0.863, 180, 3700, {.maxSpeed = 90});
     pros::delay(100);
     Scraper.set_value(true);
@@ -162,10 +162,38 @@ void odom_test() {
     chassis.calibrate(true);
     pros::delay(300);
     chassis.setPose(0, 0, 0);
-    chassis.moveToPoint(0, 2, 3700);
+    Blocker.move(0);
+    // Grab First 3 Balls
+    Intake.move(127);
+    chassis.moveToPose(-1.98, 22.5, 43, 4000, {.maxSpeed = 80});
+    chassis.waitUntilDone();
+    chassis.moveToPoint(6.02, 30.5, 4000, {.maxSpeed = 90});
+    pros::delay(1000);
+    Intake.move(0);
+    // Position at Match Load
+    chassis.turnToHeading(150, 3500, {.direction = AngularDirection::CW_CLOCKWISE, .minSpeed = 50});
+    chassis.waitUntilDone();
+    chassis.moveToPoint(18.703, 19.19, 3700, {.minSpeed = 50});
+    chassis.moveToPose(30.347, -0.863, 180, 3500, {.minSpeed = 40});
+    pros::delay(100);
+    Scraper.set_value(true);
+    pros::delay(100);
+    chassis.moveToPoint(30.347, -2.363, 2500);
+    Intake.move(127);
+    pros::delay(3000);
+    // Score on High Goal
+    chassis.moveToPoint(30.347, 24.13, 2000, {.forwards = false, .minSpeed = 90});
+    chassis.waitUntilDone();
     Intake.move(127);
     Blocker.move(127);
-    pros::delay(3700);
-    Intake.move(0);
-    Blocker.move(0);
+    pros::delay(3000);
+    // Clear Park Zone and Park
+    pros::delay(100);
+    Scraper.set_value(false);
+    pros::delay(100);
+    chassis.moveToPose(-0.745, -7.947, -90, 4000, {.maxSpeed = 90});
+    pros::delay(100);
+    Scraper.set_value(true);
+    pros::delay(100);
+    chassis.moveToPoint(-16.638, -7.947, 4000, {.minSpeed = 127});
 }
