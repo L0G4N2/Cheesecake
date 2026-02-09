@@ -197,6 +197,9 @@ void autonomous() {
 			leftWP();
 			break;
 		case 4:
+			skills();
+			break;
+		case 5:
 			odom_test();
 			break;
 	}
